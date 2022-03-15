@@ -1,6 +1,5 @@
-# Project Name
-Put here a short paragraph describing your project. 
-Adding an screenshot or a mockup of your application in action would be nice.  
+# YouTube History Analytics
+A Python Python Google-YouTube History Analytics, which reads your history data you get from Google and provides analytics about your searches on Google, YouTube and YouTube watch history. It provides number of counts for the term you searched for.
 
 ![This is a screenshot.](images.png)
 # How to run
