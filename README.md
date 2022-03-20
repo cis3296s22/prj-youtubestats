@@ -1,28 +1,24 @@
-# Project Name
-Put here a short paragraph describing your project. 
-Adding an screenshot or a mockup of your application in action would be nice.  
+<h3>YouTube Wrapped - A Python YouTube Music History Analytics</h3>
+<br>A Python YouTube History Analytics, which reads your history data you get from Google and provide analytics about your YouTube history, specifically reviewing a user's listening habits 
 
-![This is a screenshot.](images.png)
-# How to run
-Provide here instructions on how to use your application.   
-- Download the latest binary from the Release section on the right on GitHub.  
-- On the command line uncompress using
-```
-tar -xzf  
-```
-- On the command line run with
-```
-./hello
-```
-- You will see Hello World! on your terminal. 
+<h3>Requirements</h3>
+<ul>
+<li>upgrade pip in pycharm ide using 'python -m pip install --upgrade pip'</li>  
+  <li>install pandas package in pycharm ide using 'pip install pandas'</li>  
+<li>A data downloaded from Google History (You can download from <a href="https://takeout.google.com/settings/takeout">Google History</a>)</li>
+<li>Download history for YouTube and Searches. Select None from top and select YouTube and Serches</li>
+</ul>
 
-# How to contribute
-Follow this project board to know the latest status of the project: [http://...]([http://...])  
+<h3>How To Use -- From Original Open Source Project</h3>
+<ul>
+<li>After downloading data from Google, unzip it.From YouTube Takeout folder copy YouTube->history folder and paste where the script is located</li>
+<li>Same, from the Searches takeout folder copy the Searches folder and paste where the scrpt is located</li>
+<li>Running without parameters will execute for both YouTube and Google Searches</li>
+<li>Pass --y Y for running the script on YouTube data</li>
+<li>Pass --g G for running the script on Google Searches data</li>
+<li>It provide output in the csv files in the working directory</li>
+</ul>
 
-### How to build
-- Use this github repository: ... 
-- Specify what branch to use for a more stable release or for cutting edge development.  
-- Use InteliJ 11
-- Specify additional library to download if needed 
-- What file and target to compile and run. 
-- What is expected to happen when the app start. 
+<h5>For queries or issues, feel free to contact or open an <a href="https://github.com/srcecde/google-youtube-history-analytics/issues">issue</a></h5>
+
+
