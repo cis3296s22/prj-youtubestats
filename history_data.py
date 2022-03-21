@@ -25,7 +25,8 @@ def YouTubeData():
     try:
         os.chdir('history')
         read_data = pd.read_html('search-history.html')
-    except:
+    except Exception as e:
+        print(e)
         exit('\033[91m'+'No data/directory found for YouTube history or \nsearch-history.html file not found'+'\033[0m')
 
     y = []
