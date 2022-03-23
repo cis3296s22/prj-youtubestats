@@ -1,73 +1,22 @@
-# Youtube History Analysis
+<h3>YouTube Wrapped - A Python YouTube Music History Analytics</h3>
+<br>A Python YouTube History Analytics, which reads your history data you get from Google and provide analytics about your YouTube history, specifically reviewing a user's listening habits 
 
-This package locally downloads the metadata for all video in a user's Youtube history and performs a quick analysis. The results are then displayed in the browser.
+<h3>Requirements</h3>
+<ul>
+<li>upgrade pip in pycharm ide using 'python -m pip install --upgrade pip'</li>  
+  <li>install pandas package in pycharm ide using 'pip install pandas'</li>  
+<li>A data downloaded from Google History (You can download from <a href="https://takeout.google.com/settings/takeout">Google History</a>)</li>
+<li>Download history for YouTube and Searches. Select None from top and select YouTube and Serches</li>
+</ul>
 
-## Example
+<h3>How To Use -- From Original Open Source Project</h3>
+<ul>
+<li>After downloading data from Google, unzip it.From YouTube Takeout folder copy YouTube->history folder and paste where the script is located</li>
+<li>Same, from the Searches takeout folder copy the Searches folder and paste where the scrpt is located</li>
+<li>Running without parameters will execute for both YouTube and Google Searches</li>
+<li>Pass --y Y for running the script on YouTube data</li>
+<li>Pass --g G for running the script on Google Searches data</li>
+<li>It provide output in the csv files in the working directory</li>
+</ul>
 
-The final results of the analysis should look pretty similar to mine:
-
-https://jessime.github.io/youtube_gh_pages/
-
-## Installation
-This script uses Python 3.x. If you don't have Python, I would recommend downloading it from [Anaconda](https://www.continuum.io/downloads).
-
-Copy or clone this package from Github.
-
-Open the Terminal/Command Line and navigate to where you copied the package:
-
-    $ cd path/to/copied/directory
-
-Then, just run:
-
-    $ pip install -r requirements.txt
-
-to install the dependencies.
-
-## Usage
-
-There are currently two options for downloading data.
-The prefered method is to use [Google Takeout](https://takeout.google.com/).
-Make sure `YouTube and YouTube Music` is checked and follow directions to download the zip file.
-It'll take 10-30 minutes to recieve an email from Google saying your job is done.
-Unzip your downloaded file and pass it as a command line parameter:
-
-    $ python youtube_history.py --takeout /path/to/Takeout
-    
-The specific file we're looking for is `YouTube and YouTube Music/history/watch-history.html`.
-So make sure at least that one file exists in the `Takeout` directory.
-    
-### Downloading with `youtube-dl`
-If you're more of a gambler, you can try using `youtube-dl` to download your data.
-Just do:
-
-    $ python youtube_history.py
-
-and you'll be prompted for your Google username and password if you haven't downloaded the raw metadata yet.
-These are used only by `youtube-dl` and not saved in any way (even locally).
-
-This is a "gamble" because `youtube-dl` is constantly fighting Google bot detection and losing more often than not.
-So your login attempts may trigger 2-Factor Authentication or fail completely.
-To help avoid triggering Google's protective measures, you can rate-limit your requests.
-This will slow down download time, but increase the likelihood of being able to download everything.
-To delay requests for a second, do:
-
-    $ python youtube_history.py -d 1
-
-### Running with fresh data
-
-To specify any non-default directory for the data, run:
-
-    $ python youtube_history.py -o /path/to/empty/data/directory/
-
-Once raw metadata is downloaded to the default data directory, this step is skipped in future runs to save time.
-If you want to download a second dataset, you'll have to point the script to a new directory.
-(Or you can manually clear out the default `/data` folder). 
-
-## Questions and Comments
-
-Feel free to direct any questions or comments to the Issues page of the repository.
-
-## TODO
-
-* Add a pip package and command line tool.
-* Add more complicated analyses, like Reddit's best method.
+<h5>For queries or issues, feel free to contact or open an <a href="https://github.com/srcecde/google-youtube-history-analytics/issues">issue</a></h5>

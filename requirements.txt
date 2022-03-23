@@ -6,4 +6,4 @@ pandas
 plotly
 wordcloud
 beautifulsoup4
-emoji
+emoji~=1.6.3
