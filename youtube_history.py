@@ -20,7 +20,7 @@ from webbrowser import open_new_tab
 import pandas as pd
 import numpy as np
 
-from wordcloud import WordCloud
+from wordcloud import WordCloud, STOPWORDS
 from flask import Flask
 from flask import render_template
 from bs4 import BeautifulSoup
@@ -47,6 +47,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html', analysis=analysis)
+    # return render_template('ogindex.html', analysis=analysis)
 
 
 def launch_web():
@@ -275,16 +276,42 @@ class Analysis:
         self.formatted_time = ', '.join(result)
 
     def best_and_worst_videos(self):
+        # og
+        # """Finds well liked and highly viewed videos"""
+        # self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
+        # low_views = self.df[self.df['view_count'] < 10]
+        # self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
+        # self.df['deciles'] = pd.qcut(self.df['view_count'], 10, labels=False)
+        # grouped = self.df.groupby(by='deciles')
+        # self.worst_per_decile = self.df.iloc[grouped['average_rating'].idxmin()]
+        # self.best_per_decile = self.df.iloc[grouped['average_rating'].idxmax()]
+        # ********************** 
+
+
+
+
+
         """Finds well liked and highly viewed videos"""
         self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
         low_views = self.df[self.df['view_count'] < 10]
         self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
         self.df['deciles'] = pd.qcut(self.df['view_count'], 10, labels=False)
         grouped = self.df.groupby(by='deciles')
-        # print(grouped['average_rating'].idxmax())
-        print(self.df.iloc[grouped['average_rating']])
-        self.best_per_decile = self.df.iloc[grouped['average_rating'].idxmax()]
-        self.worst_per_decile = self.df.iloc[grouped['average_rating'].idxmin()]
+        print(grouped['average_rating'])
+        print(self.df.columns.get_loc('average_rating'))
+        for name, group in grouped:
+            print(name)
+            print(group)
+            print(group['average_rating'])
+            # print(self.df.iloc[group['average_rating'].idxmin()])
+            print('\n')
+        print(grouped['average_rating'].idxmin())
+        print(grouped['average_rating'].idxmax())
+        x = grouped['average_rating'].idxmin()
+        y = grouped['average_rating'].idxmax()
+        # self.worst_per_decile = self.df.iloc[11].idxmin()
+        # self.best_per_decile = self.df.iloc[grouped['average_rating'].idxmax()]
+        self.best_per_decile = self.df.iloc[y]
 
     def most_emojis_description(self):
         def _emoji_variety(desc):
@@ -371,6 +398,16 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--takeout',
                         help='Path to an unzipped Takeout folder downloaded from https://takeout.google.com/')
     args = parser.parse_args()
+    while (args.takeout == None): 
+        print('No takeout file detected, enter path to takeout file')
+        args.takeout = input()
+        if os.path.exists(args.takeout):
+            analysis = Analysis(args.takeout, args.out, float(args.delay))
+            analysis.run()
+            launch_web()
+        else: 
+            print('Not a valid file path')
+            args.takeout = None
     analysis = Analysis(args.takeout, args.out, float(args.delay))
     analysis.run()
     launch_web()
