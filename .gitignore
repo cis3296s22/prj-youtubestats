@@ -74,8 +74,6 @@ target/
 
 #Data
 static/images/wordcloud.png
-data/*
-data*/*
 
 #PyCharm
 .idea/
