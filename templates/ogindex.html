@@ -110,7 +110,8 @@
                     <li><b>Url: </b><a href="{{analysis.most_viewed.webpage_url}}">{{analysis.most_viewed.webpage_url}}</a></li>
                   </ul>
                 </div>
-                  <h4>(A sampling of) videos with single digit views:</h4>
+                  <!-- <h4>(A sampling of) videos with single digit views:</h4> -->
+                  <h4>(A sampling of) videos with less than 1000 digit views:</h4>
                   <table>
                     <tr>
                       <th>Number</th>
@@ -135,14 +136,14 @@
                       <th>Views</th>
                       <th>Title</th>
                       <th>Url</th>
-                      <th>Rating</th>
+                      <!-- <th>Rating</th> -->
                     </tr>
                     {% for i, row in analysis.best_per_decile.iterrows() %}
                       <tr>
                           <td>{{row.view_count}}</td>
                           <td>{{row.title}}</td>
                           <td><a href="{{row.webpage_url}}">{{row.webpage_url}}</a></td>
-                          <td>{{row.average_rating}}</td>
+                          <!-- <td>{{row.average_rating}}</td> -->
                       </tr>
                     {% endfor %}
                   </table>
@@ -154,14 +155,14 @@
                       <th>Views</th>
                       <th>Title</th>
                       <th>Url</th>
-                      <th>Rating</th>
+                      <!-- <th>Rating</th> -->
                     </tr>
                     {% for i, row in analysis.worst_per_decile.iterrows() %}
                       <tr>
                           <td>{{row.view_count}}</td>
                           <td>{{row.title}}</td>
                           <td><a href="{{row.webpage_url}}">{{row.webpage_url}}</a></td>
-                          <td>{{row.average_rating}}</td>
+                          <!-- <td>{{row.average_rating}}</td> -->
                       </tr>
                     {% endfor %}
                   </table>

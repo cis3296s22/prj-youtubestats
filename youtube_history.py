@@ -5,6 +5,7 @@
 Downloads, analyzes, and reports all Youtube videos associated with a user's Google account.
 """
 
+from asyncio.windows_events import NULL
 import json
 import os
 import pickle
@@ -46,8 +47,8 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html', analysis=analysis)
-    # return render_template('ogindex.html', analysis=analysis)
+    # return render_template('index.html', analysis=analysis)
+    return render_template('ogindex.html', analysis=analysis)
 
 
 def launch_web():
@@ -293,30 +294,35 @@ class Analysis:
 
         """Finds well liked and highly viewed videos"""
         self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
-        low_views = self.df[self.df['view_count'] < 10]
+        # less than 10 views 
+        # low_views = self.df[self.df['view_count'] < 10] 
+        # less than 1k views 
+        low_views = self.df[self.df['view_count'] < 1000] 
         self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
         self.df['deciles'] = pd.qcut(self.df['view_count'], 10, labels=False)
         grouped = self.df.groupby(by='deciles')
-        print(grouped['average_rating'])
-        print(self.df.columns.get_loc('average_rating'))
-        for name, group in grouped:
-            print(name)
-            print(group)
-            print(group['average_rating'])
-            # print(self.df.iloc[group['average_rating'].idxmin()])
-            print('\n')
-        print(grouped['average_rating'].idxmin())
-        print(grouped['average_rating'].idxmax())
-        x = grouped['average_rating'].idxmin()
-        y = grouped['average_rating'].idxmax()
-        # self.worst_per_decile = self.df.iloc[11].idxmin()
-        # self.best_per_decile = self.df.iloc[grouped['average_rating'].idxmax()]
-        self.best_per_decile = self.df.iloc[y]
+        # print(grouped['like_count'])
+        # print(self.df.columns.get_loc('like_count'))
+        # for name, group in grouped:
+        #     print(name)
+        #     print(group)
+        #     print(group['like_count'])
+        #     # print(self.df.iloc[group['average_rating'].idxmin()])
+        #     print('\n')
+        # print(grouped['like_count'].idxmin())
+        # print(grouped['like_count'].idxmax())
+        # x = grouped['like_count'].idxmin()
+        # y = grouped['like_count'].idxmax()
+        self.worst_per_decile = self.df.iloc[grouped['like_count'].idxmin()]
+        self.best_per_decile = self.df.iloc[grouped['like_count'].idxmax()]
 
     def most_emojis_description(self):
         def _emoji_variety(desc):
-            return len({x['emoji'] for x in emoji_lis(desc)})
-
+            # getting errors here because some descriptions are NaN or numbers so just skip over any TypeErrors
+            try:
+                return len({x['emoji'] for x in emoji_lis(desc)})
+            except TypeError:
+                pass
         counts = self.df['description'].apply(_emoji_variety)
         self.emojis = self.df.iloc[counts.idxmax()]
 
@@ -352,7 +358,7 @@ class Analysis:
     def compute(self):
         print('Computing...')
         self.total_time()
-        # self.best_and_worst_videos()
+        self.best_and_worst_videos()
         self.most_emojis_description()
         self.oldest_videos = self.df[['title', 'webpage_url']].tail(n=10)
         self.oldest_upload = self.df.loc[self.df['upload_date'].idxmin()]
