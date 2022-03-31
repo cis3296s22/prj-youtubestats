@@ -47,9 +47,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # return render_template('index.html', analysis=analysis)
-    return render_template('ogindex.html', analysis=analysis)
-
+    return render_template('index.html', analysis=analysis)
 
 def launch_web():
     app.debug = False
@@ -118,6 +116,8 @@ class Analysis:
         The number of videos that have ultra-high-definition resolution
     top_uploaders : Series
         The most watched channel names with corresponding video counts
+    most_played_artist 
+        The mode (most occurences) of an artist in the data set
     funny_counts : int
         The max number of times a video's description says the word 'funny'
     funny : Series
@@ -145,6 +145,7 @@ class Analysis:
         self.HD = None
         self.UHD = None
         self.top_uploaders = None
+        self.most_played_artist = None
         self.funny = None
         self.funny_counts = None
 
@@ -277,42 +278,15 @@ class Analysis:
         self.formatted_time = ', '.join(result)
 
     def best_and_worst_videos(self):
-        # og
-        # """Finds well liked and highly viewed videos"""
-        # self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
-        # low_views = self.df[self.df['view_count'] < 10]
-        # self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
-        # self.df['deciles'] = pd.qcut(self.df['view_count'], 10, labels=False)
-        # grouped = self.df.groupby(by='deciles')
-        # self.worst_per_decile = self.df.iloc[grouped['average_rating'].idxmin()]
-        # self.best_per_decile = self.df.iloc[grouped['average_rating'].idxmax()]
-        # ********************** 
-
-
-
-
-
         """Finds well liked and highly viewed videos"""
         self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
         # less than 10 views 
         # low_views = self.df[self.df['view_count'] < 10] 
-        # less than 1k views 
-        low_views = self.df[self.df['view_count'] < 1000] 
+        # less than 100 views 
+        low_views = self.df[self.df['view_count'] < 100] 
         self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
         self.df['deciles'] = pd.qcut(self.df['view_count'], 10, labels=False)
         grouped = self.df.groupby(by='deciles')
-        # print(grouped['like_count'])
-        # print(self.df.columns.get_loc('like_count'))
-        # for name, group in grouped:
-        #     print(name)
-        #     print(group)
-        #     print(group['like_count'])
-        #     # print(self.df.iloc[group['average_rating'].idxmin()])
-        #     print('\n')
-        # print(grouped['like_count'].idxmin())
-        # print(grouped['like_count'].idxmax())
-        # x = grouped['like_count'].idxmin()
-        # y = grouped['like_count'].idxmax()
         self.worst_per_decile = self.df.iloc[grouped['like_count'].idxmin()]
         self.best_per_decile = self.df.iloc[grouped['like_count'].idxmax()]
 
@@ -353,6 +327,7 @@ class Analysis:
         self.HD = self.df[(720 <= height) & (height <= 1080)].shape[0]
         self.UHD = self.df[height > 1080].shape[0]
         self.top_uploaders = self.df.uploader.value_counts().head(n=15)
+        self.most_played_artist = self.df['artist'].mode()
         self.funniest_description()
 
     def compute(self):

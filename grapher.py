@@ -94,16 +94,15 @@ class Grapher():
     def average_rating(self):
         # data = [go.Histogram(x=self.df.average_rating,
         #                      marker=dict(color='#673AB7'))]
-        data = [go.Histogram(x=self.df.like_count,
+        data = [go.Histogram(x=self.df.release_year,
                              marker=dict(color='#673AB7'))]
-        layout = dict(title='All Rating',
-                      xaxis = dict(title = 'Rating'),
+        layout = dict(title='Release Years',
+                      xaxis = dict(title = 'Year'),
                       yaxis = dict(title = 'Count'))
         fig = dict(data=data, layout=layout)
         self.avg_rate_plot = self.plot(fig,  output_type='div')
     
     def duration(self):  
-
         dur, ticks, ticks_txt = self.make_log_data(self.df.duration/60)
         data = [go.Histogram(x=dur,
                              marker=dict(color='#673AB7'))]
