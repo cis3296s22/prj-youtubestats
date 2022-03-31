@@ -1,6 +1,6 @@
 # Youtube History Analysis
 
-This package locally downloads the metadata for all video in a user's Youtube history and performs a quick analysis. The results are then displayed in the browser.
+This package locally downloads the metadata for all video in a user's Youtube history and performs an analysis. The results are then displayed in the browser.
 
 ## Example
 
@@ -67,7 +67,3 @@ If you want to download a second dataset, you'll have to point the script to a n
 
 Feel free to direct any questions or comments to the Issues page of the repository.
 
-## TODO
-
-* Add a pip package and command line tool.
-* Add more complicated analyses, like Reddit's best method.
