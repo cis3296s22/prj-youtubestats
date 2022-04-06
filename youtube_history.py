@@ -5,6 +5,7 @@
 Downloads, analyzes, and reports all Youtube videos associated with a user's Google account.
 """
 
+from asyncio.windows_events import NULL
 import json
 import os
 import pickle
@@ -47,8 +48,6 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html', analysis=analysis)
-    # return render_template('ogindex.html', analysis=analysis)
-
 
 def launch_web():
     app.debug = False
@@ -117,6 +116,8 @@ class Analysis:
         The number of videos that have ultra-high-definition resolution
     top_uploaders : Series
         The most watched channel names with corresponding video counts
+    most_played_artist 
+        The mode (most occurences) of an artist in the data set
     funny_counts : int
         The max number of times a video's description says the word 'funny'
     funny : Series
@@ -144,6 +145,7 @@ class Analysis:
         self.HD = None
         self.UHD = None
         self.top_uploaders = None
+        self.most_played_artist = None
         self.funny = None
         self.funny_counts = None
 
@@ -276,47 +278,25 @@ class Analysis:
         self.formatted_time = ', '.join(result)
 
     def best_and_worst_videos(self):
-        # og
-        # """Finds well liked and highly viewed videos"""
-        # self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
-        # low_views = self.df[self.df['view_count'] < 10]
-        # self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
-        # self.df['deciles'] = pd.qcut(self.df['view_count'], 10, labels=False)
-        # grouped = self.df.groupby(by='deciles')
-        # self.worst_per_decile = self.df.iloc[grouped['average_rating'].idxmin()]
-        # self.best_per_decile = self.df.iloc[grouped['average_rating'].idxmax()]
-        # ********************** 
-
-
-
-
-
         """Finds well liked and highly viewed videos"""
         self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
-        low_views = self.df[self.df['view_count'] < 10]
+        # less than 10 views 
+        # low_views = self.df[self.df['view_count'] < 10] 
+        # less than 100 views 
+        low_views = self.df[self.df['view_count'] < 100] 
         self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
         self.df['deciles'] = pd.qcut(self.df['view_count'], 10, labels=False)
         grouped = self.df.groupby(by='deciles')
-        print(grouped['average_rating'])
-        print(self.df.columns.get_loc('average_rating'))
-        for name, group in grouped:
-            print(name)
-            print(group)
-            print(group['average_rating'])
-            # print(self.df.iloc[group['average_rating'].idxmin()])
-            print('\n')
-        print(grouped['average_rating'].idxmin())
-        print(grouped['average_rating'].idxmax())
-        x = grouped['average_rating'].idxmin()
-        y = grouped['average_rating'].idxmax()
-        # self.worst_per_decile = self.df.iloc[11].idxmin()
-        # self.best_per_decile = self.df.iloc[grouped['average_rating'].idxmax()]
-        self.best_per_decile = self.df.iloc[y]
+        self.worst_per_decile = self.df.iloc[grouped['like_count'].idxmin()]
+        self.best_per_decile = self.df.iloc[grouped['like_count'].idxmax()]
 
     def most_emojis_description(self):
         def _emoji_variety(desc):
-            return len({x['emoji'] for x in emoji_lis(desc)})
-
+            # getting errors here because some descriptions are NaN or numbers so just skip over any TypeErrors
+            try:
+                return len({x['emoji'] for x in emoji_lis(desc)})
+            except TypeError:
+                pass
         counts = self.df['description'].apply(_emoji_variety)
         self.emojis = self.df.iloc[counts.idxmax()]
 
@@ -347,12 +327,13 @@ class Analysis:
         self.HD = self.df[(720 <= height) & (height <= 1080)].shape[0]
         self.UHD = self.df[height > 1080].shape[0]
         self.top_uploaders = self.df.uploader.value_counts().head(n=15)
+        self.most_played_artist = self.df['artist'].mode()
         self.funniest_description()
 
     def compute(self):
         print('Computing...')
         self.total_time()
-        # self.best_and_worst_videos()
+        self.best_and_worst_videos()
         self.most_emojis_description()
         self.oldest_videos = self.df[['title', 'webpage_url']].tail(n=10)
         self.oldest_upload = self.df.loc[self.df['upload_date'].idxmin()]
