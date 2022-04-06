@@ -1,8 +1,13 @@
 from unittest import TestCase
 
+from youtube_history import Analysis
 
 class TestAnalysis(TestCase):
+    def setUp(self):
+        self.analysis = Analysis(outpath='data', delay=0, takeout="C:\\Users\\Tyler\\OneDrive\\CIS3296\\Takeout")
+    
     def test_download_data(self):
+        
         self.fail()
 
     def test_deprecated_download_data_via_youtube_dl_login(self):
