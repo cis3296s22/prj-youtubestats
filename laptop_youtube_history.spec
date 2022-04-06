@@ -4,7 +4,7 @@
 block_cipher = None
 
 a = Analysis(['youtube_history.py'],
-             pathex=[],
+             pathex=[(r'C:\School\cis3296\youtubestats\venv\Lib\site-packages')],
              binaries=[],
              datas=[
                  (r'C:\School\cis3296\youtubestats\data', 'data'), 
@@ -13,10 +13,8 @@ a = Analysis(['youtube_history.py'],
                  (r'C:\School\cis3296\youtubestats\templates', 'templates'),
                  (r'C:\School\cis3296\youtubestats\grapher.py', '.'),
                  (r'C:\School\cis3296\youtubestats\images.png', '.'), 
-                 (r'C:\School\cis3296\youtubestats\venv\Lib\site-packages\wordcloud\stopwords', 'wordcloud'),
-                 (r'C:\School\cis3296\youtubestats\venv\Lib\site-packages\wordcloud', 'wordcloud'),
+                 (r'C:\School\cis3296\youtubestats\venv\Lib\site-packages\wordcloud\stopwords', 'wordcloud'), 
                  (r'C:\School\cis3296\youtubestats\venv\Scripts\youtube-dl.exe', '.'),
-                 (r'C:\School\cis3296\youtubestats\venv', 'venv'), 
                  (r'C:\School\cis3296\youtubestats\venv\lib\site-packages\wordcloud\DroidSansMono.ttf', 'wordcloud')
              ],
              hiddenimports=[],

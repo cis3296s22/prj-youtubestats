@@ -159,6 +159,7 @@ class Analysis:
             text = watch_history.read_text()
         except UnicodeDecodeError:
             text = watch_history.read_text(encoding='utf-8')
+            # or we are going to pass?
         soup = BeautifulSoup(text, 'html.parser')
         urls = [u.get('href') for u in soup.find_all('a')]
         videos = [u for u in urls if 'www.youtube.com/watch' in u]
@@ -280,8 +281,6 @@ class Analysis:
     def best_and_worst_videos(self):
         """Finds well liked and highly viewed videos"""
         self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
-        # less than 10 views 
-        # low_views = self.df[self.df['view_count'] < 10] 
         # less than 100 views 
         low_views = self.df[self.df['view_count'] < 100] 
         self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
