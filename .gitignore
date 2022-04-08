@@ -83,3 +83,4 @@ wordcloud-1.8.1-cp39-cp39-win_amd64.whl
 /history
 working youtube spec.txt
 # youtube_history_classes.py
+*.DS_Store

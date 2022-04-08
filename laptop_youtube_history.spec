@@ -9,6 +9,8 @@ a = Analysis(['youtube_history.py'],
              datas=[
                  (r'C:\School\cis3296\youtubestats\data', 'data'), 
                  (r'C:\School\cis3296\youtubestats\data\urls.txt', 'data'),
+                 (r'C:\School\cis3296\youtubestats\data\ran', 'data'),
+                 (r'C:\School\cis3296\youtubestats\data\raw', 'data'),
                  (r'C:\School\cis3296\youtubestats\static', 'static'),
                  (r'C:\School\cis3296\youtubestats\templates', 'templates'),
                  (r'C:\School\cis3296\youtubestats\grapher.py', '.'),

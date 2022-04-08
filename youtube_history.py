@@ -28,6 +28,7 @@ from bs4 import BeautifulSoup
 from emoji import emoji_lis
 
 from grapher import Grapher, flatten_without_nones
+import youtube_dl
 
 
 DEPRECATION_NOTE = """
@@ -167,8 +168,16 @@ class Analysis:
         url_path.write_text('\n'.join(videos))
         print(f'Urls extracted. Downloading data for {len(videos)} videos now.')
         output = os.path.join(self.raw, '%(autonumber)s')
-        cmd = f'youtube-dl -o "{output}" --skip-download --write-info-json -i -a {url_path}'
-        p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
+        print(f"outpath: {output}")
+        print(f"url path: {url_path}")
+        try:
+            cmd = f'youtube-dl -o "{output}" --skip-download --write-info-json -i -a {url_path}'
+        except Exception as e:
+            print(f"Data download error: {e}")
+        try: 
+            p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
+        except Exception as e:
+            print(f"Popen error: {e}")
         line = True
         while line:
             line = p.stdout.readline().decode("utf-8").strip()
