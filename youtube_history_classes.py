@@ -322,17 +322,17 @@ class Analysis:
         wordcloud.generate(' '.join(flat_tags))
         wordcloud.to_file(os.path.join('static', 'images', 'wordcloud.png'))
 
-    # def check_df(self):
-    #     """Create the dataframe and tags from files if file doesn't exist."""
-    #     if not os.path.exists(self.ran):
-    #         os.makedirs(self.ran)
-    #     df_file = os.path.join(self.ran, 'df.csv')
-    #     if os.path.isfile(df_file):
-    #         self.df = pd.read_csv(df_file, index_col=0, parse_dates=[-11])
-    #         self.tags = pickle.load(open(os.path.join(self.ran, 'tags.txt'), 'rb'))
-    #         self.df['upload_date'] = pd.to_datetime(self.df['upload_date'])
-    #     else:
-    #         self.df_from_files()
+    def check_df(self):
+        """Create the dataframe and tags from files if file doesn't exist."""
+        if not os.path.exists(self.ran):
+            os.makedirs(self.ran)
+        df_file = os.path.join(self.ran, 'df.csv')
+        if os.path.isfile(df_file):
+            self.df = pd.read_csv(df_file, index_col=0, parse_dates=[-11])
+            self.tags = pickle.load(open(os.path.join(self.ran, 'tags.txt'), 'rb'))
+            self.df['upload_date'] = pd.to_datetime(self.df['upload_date'])
+        else:
+            self.df_from_files()
 
     def total_time(self):
         """The amount of time spent watching videos."""
