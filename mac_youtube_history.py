@@ -144,6 +144,7 @@ class Analysis:
         self.UHD = None
         self.top_uploaders = None
         self.most_played_artist = None
+        self.most_played_artist_watchtime = None
         self.funny = None
         self.funny_counts = None
 
@@ -327,6 +328,33 @@ class Analysis:
         self.top_uploaders = self.df.uploader.value_counts().head(n=15)
         self.most_played_artist = self.df['artist'].mode()
         self.funniest_description()
+        
+    def calc_most_played_artist_watchtime(self):
+        """Compute the total watchtime for the most played artist"""
+        
+        
+        seconds = self.df.duration.sum()
+        
+        intervals = (
+            ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
+            ('weeks', 604800),    # 60 * 60 * 24 * 7
+            ('days', 86400),      # 60 * 60 * 24
+            ('hours', 3600),      # 60 * 60
+            ('minutes', 60),
+            ('seconds', 1)
+            )
+
+        result = []
+
+        for name, count in intervals:
+            value = seconds // count
+            if value:
+                seconds -= value * count
+                if value == 1:
+                    name = name.rstrip('s')
+                result.append("{} {}".format(int(value), name))
+        self.formatted_time = ', '.join(result)
+        
 
     def compute(self):
         print('Computing...')

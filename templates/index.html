@@ -80,13 +80,25 @@
       <main class="mdl-layout__content">
         <div class="mdl-layout__tab-panel is-active" id="overview">
 
+          <!-- Time spend watching videos:-->
+          <section id="time" class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h3>Time spent watching videos:</h3>        
+                <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
+                <h2 class="mdl-color-text--accent">{{analysis.formatted_time}}</h2>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section id="time" class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
             <div class="mdl-card mdl-cell mdl-cell--12-col">
               <div class="mdl-card__supporting-text">
                   <h3>Most Watched Creator:</h3>
                   <div class="section__text mdl-cell mdl-cell--4-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
                     <img src="https://yt3.ggpht.com/ytc/AKedOLSr5Li2HcdUrdvp3k0lE1fMup-phmTaGLMV-S9UGA=s176-c-k-c0x00ffffff-no-rj-mo" class="avatar mdl-shadow--16dp">
-                    <h2 class="mdl-color-text--accent">MrBeast</h2>
+                    <h2 class="mdl-color-text--accent">{{analysis.most_played_artist.values[0]}}</h2>
                   </div>                
                 <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
                   <h4>You Watched MrBeast for 832 minutes!</h4> 
@@ -102,119 +114,22 @@
                   <h3>Top 10 Most Watched Creators:</h3>
                   <div class="section__text mdl-cell mdl-cell--4-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
                     <ul class="demo-list-three mdl-list">
+                      {% for k, v in analysis.top_uploaders.items() %}
                       <li class="mdl-list__item mdl-list__item--three-line">
                         <span class="mdl-list__item-primary-content">
                           <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
+                          <span>{{k}}</span>
                           <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
+                            You watched {{v}} videos from {{k}}
                           </span>
                         </span>
                       </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      <li class="mdl-list__item mdl-list__item--three-line">
-                        <span class="mdl-list__item-primary-content">
-                          <i class="material-icons mdl-list__item-avatar">person</i>
-                          <span>MrBeast</span>
-                          <span class="mdl-list__item-text-body">
-                            You watched 52 videos from MrBeast, totaling 832 minutes of watch time.
-                          </span>
-                        </span>
-                      </li>
-                      
+				              {% endfor %}              
                     </ul>
                   </div>                
               </div>
             </div>
 
-          </section>
-
-
-<!-- Time spend watching videos:-->
-          <section id="time" class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-            <div class="mdl-card mdl-cell mdl-cell--12-col">
-              <div class="mdl-card__supporting-text">
-                <h3>Time spent watching videos:</h3>
-                <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
-                <h4>Seconds: {{analysis.seconds}}</h4> 
-                </div>                
-                <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
-                <h4>Or, in other words:</h4>
-                {{analysis.formatted_time}}
-                </div>
-              </div>
-            </div>
           </section>
 
 
