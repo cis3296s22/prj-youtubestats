@@ -168,20 +168,27 @@ class Analysis:
         url_path.write_text('\n'.join(videos))
         print(f'Urls extracted. Downloading data for {len(videos)} videos now.')
         output = os.path.join(self.raw, '%(autonumber)s')
+        full_path = os.path.join(os.getcwd(), output)
         print(f"outpath: {output}")
         print(f"url path: {url_path}")
+        print(f"cwd is {os.getcwd()}")
+        print(f"full path is {full_path}")
         try:
-            cmd = f'youtube-dl -o "{output}" --skip-download --write-info-json -i -a {url_path}'
+            cmd = f'youtube-dl -o "{full_path}" --skip-download --write-info-json -i -a {url_path}'
         except Exception as e:
             print(f"Data download error: {e}")
         try: 
-            p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
-        except Exception as e:
-            print(f"Popen error: {e}")
-        line = True
-        while line:
-            line = p.stdout.readline().decode("utf-8").strip()
-            print(line)
+            # p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
+            # p = sp.check_output(cmd, stderr=sp.STDOUT, shell=True)
+            p = sp.run(cmd, capture_output=True, shell=True)
+        except sp.CalledProcessError as e:
+            print(f"Popen subprocess error: {e}\n")
+            print(f"CalledProcessError return code: {sp.CalledProcessError.returncode}")
+        print(p.stdout.decode("utf-8").strip())
+        # line = True
+        # while line:
+        #     line = p.stdout.decode("utf-8").strip()
+        #     print(line)
 
     def deprecated_download_data_via_youtube_dl_login(self):
         """Uses youtube_dl to download individual json files for each video."""
