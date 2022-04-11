@@ -164,6 +164,7 @@ class Analysis:
         url_path.write_text('\n'.join(videos))
         print(f'Urls extracted. Downloading data for {len(videos)} videos now.')
         output = os.path.join(self.raw, '%(autonumber)s')
+        # note the './' before the youtube dl command, this is neccesary for macOS machines
         cmd = f'./youtube-dl -o "{output}" --skip-download --write-info-json -i -a {url_path}'
         p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
         line = True
