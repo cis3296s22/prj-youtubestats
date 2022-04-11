@@ -180,7 +180,7 @@ class Analysis:
         try: 
             # p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
             # p = sp.check_output(cmd, stderr=sp.STDOUT, shell=True)
-            p = sp.run(cmd, capture_output=True, shell=True)
+            p = sp.run(cmd, capture_output=True, shell=True, check=True)
         except sp.CalledProcessError as e:
             print(f"Popen subprocess error: {e}\n")
             print(f"CalledProcessError return code: {sp.CalledProcessError.returncode}")
