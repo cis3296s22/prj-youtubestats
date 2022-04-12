@@ -5,13 +5,14 @@
 Downloads, analyzes, and reports all Youtube videos associated with a user's Google account.
 """
 
+from asyncio.windows_events import NULL
 import json
 import os
 import pickle
 import argparse
 import getpass
 import subprocess as sp
-import sys 
+import sys
 
 from collections import namedtuple
 from pathlib import Path
@@ -27,7 +28,6 @@ from bs4 import BeautifulSoup
 from emoji import emoji_lis
 
 from grapher import Grapher, flatten_without_nones
-import youtube_dl
 
 
 DEPRECATION_NOTE = """
@@ -66,6 +66,87 @@ def make_fake_series(title='N/A', webpage_url='N/A', **kwargs):
     Mock = namedtuple('MockSeries', params)
     return Mock(title, webpage_url, **kwargs)
 
+class Download_Data:
+    def __init__(self, takeout, path:Path, raw):
+        self.takeout = takeout
+        self.path = path
+        self.raw = raw
+    def run(self):
+        """Uses Takeout to download individual json files for each video."""
+        watch_history = self.takeout / 'YouTube and YouTube Music/history/watch-history.html'
+        if not watch_history.is_file():
+            raise ValueError(f'"{watch_history}" is not a file. Did you download your YouTube data? ')
+        print('Extracting video urls from Takeout.'); sys.stdout.flush()
+        try:
+            text = watch_history.read_text()
+        except UnicodeDecodeError:
+            text = watch_history.read_text(encoding='utf-8')
+        soup = BeautifulSoup(text, 'html.parser')
+        urls = [u.get('href') for u in soup.find_all('a')]
+        videos = [u for u in urls if 'www.youtube.com/watch' in u]
+        url_path = self.raw / 'urls.txt'
+        url_path.write_text('\n'.join(videos))
+        print(f'Urls extracted. Downloading data for {len(videos)} videos now.')
+        output = os.path.join(self.raw, '%(autonumber)s')
+        cmd = f'youtube-dl -o "{output}" --skip-download --write-info-json -i -a {url_path}'
+        p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
+        line = True
+        while line:
+            line = p.stdout.readline().decode("utf-8").strip()
+            print(line)
+        pass
+
+class Check_DF:
+    def __init__(self, df, ran, tags):
+        self.df = df
+        self.tags = tags
+        self.ran = ran
+    def run(self):
+        """Create the dataframe and tags from files if file doesn't exist."""
+        if not os.path.exists(self.ran):
+            os.makedirs(self.ran)
+        df_file = os.path.join(self.ran, 'df.csv')
+        if os.path.isfile(df_file):
+            self.df = pd.read_csv(df_file, index_col=0, parse_dates=[-11])
+            self.tags = pickle.load(open(os.path.join(self.ran, 'tags.txt'), 'rb'))
+            self.df['upload_date'] = pd.to_datetime(self.df['upload_date'])
+        else:
+            # self.df_from_files()
+            df_from_files = Df_From_Files().run(self.df, self.ran, self.tags)
+    pass
+
+class Df_From_Files:
+    def __init__(self, df, ran, tags):
+        self.df = df
+        self.tags = tags
+        self.ran = ran
+    def run(self):
+        """Constructs a Dataframe from the downloaded json files.
+
+        All json keys whose values are not lists are compiled into the dataframe.
+        The dataframe is then saved as a csv file in the self.ran directory.
+        The tags of each video are pickled and saved as tags.txt
+        """
+        print('Creating dataframe...')
+        num = len([name for name in os.listdir(self.raw) if not name[0] == '.'])
+        files = os.path.join(self.raw, '~.info.json') # This is a weird hack
+        files = files.replace('~', '{:05d}') # It allows path joining to work on Windows
+        data = [json.load(open(files.format(i))) for i in range(1, num + 1)]
+
+        columns = ['formats', 'tags', 'categories', 'thumbnails']
+        lists = [[], [], [], []]
+        deletes = {k: v for k, v in zip(columns, lists)}
+        for dt in data:
+            for col, ls in deletes.items():
+                ls.append(dt[col])
+                del dt[col]
+
+        self.df = pd.DataFrame(data)
+        self.df['upload_date'] = pd.to_datetime(self.df['upload_date'], format='%Y%m%d')
+        self.df.to_csv(os.path.join(self.ran, 'df.csv'))
+
+        self.tags = deletes['tags']
+        pickle.dump(self.tags, open(os.path.join(self.ran, 'tags.txt'), 'wb'))
 
 class Analysis:
     """Main class responsible for downloading and analyzing data.
@@ -149,46 +230,29 @@ class Analysis:
         self.funny = None
         self.funny_counts = None
 
-    def download_data(self):
-        """Uses Takeout to download individual json files for each video."""
-        watch_history = self.takeout / 'YouTube and YouTube Music/history/watch-history.html'
-        if not watch_history.is_file():
-            raise ValueError(f'"{watch_history}" is not a file. Did you download your YouTube data? ')
-        print('Extracting video urls from Takeout.'); sys.stdout.flush()
-        try:
-            text = watch_history.read_text()
-        except UnicodeDecodeError:
-            text = watch_history.read_text(encoding='utf-8')
-            # or we are going to pass?
-        soup = BeautifulSoup(text, 'html.parser')
-        urls = [u.get('href') for u in soup.find_all('a')]
-        videos = [u for u in urls if 'www.youtube.com/watch' in u]
-        url_path = self.path / 'urls.txt'
-        url_path.write_text('\n'.join(videos))
-        print(f'Urls extracted. Downloading data for {len(videos)} videos now.')
-        output = os.path.join(self.raw, '%(autonumber)s')
-        full_path = os.path.join(os.getcwd(), output)
-        # for debugging----------
-        # print(f"outpath: {output}")
-        # print(f"url path: {url_path}")
-        # print(f"cwd is {os.getcwd()}")
-        # print(f"full path is {full_path}")
-        # --------------------
-        try:
-            cmd = f'youtube-dl -o "{full_path}" --skip-download --write-info-json -i -a {url_path}'
-        except Exception as e:
-            print(f"Data download error: {e}")
-        try: 
-            p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
-            # p = sp.check_output(cmd, stderr=sp.STDOUT, shell=True)
-            # p = sp.run(cmd, capture_output=True, shell=True, check=True)
-        except sp.CalledProcessError as e:
-            print(f"Popen subprocess error: {e}\n")
-            print(f"CalledProcessError return code: {sp.CalledProcessError.returncode}")
-        line = True
-        while line:
-            line = p.stdout.readline().decode("utf-8").strip()
-            print(line)
+    # def download_data(self):
+    #     """Uses Takeout to download individual json files for each video."""
+    #     watch_history = self.takeout / 'YouTube and YouTube Music/history/watch-history.html'
+    #     if not watch_history.is_file():
+    #         raise ValueError(f'"{watch_history}" is not a file. Did you download your YouTube data? ')
+    #     print('Extracting video urls from Takeout.'); sys.stdout.flush()
+    #     try:
+    #         text = watch_history.read_text()
+    #     except UnicodeDecodeError:
+    #         text = watch_history.read_text(encoding='utf-8')
+    #     soup = BeautifulSoup(text, 'html.parser')
+    #     urls = [u.get('href') for u in soup.find_all('a')]
+    #     videos = [u for u in urls if 'www.youtube.com/watch' in u]
+    #     url_path = self.path / 'urls.txt'
+    #     url_path.write_text('\n'.join(videos))
+    #     print(f'Urls extracted. Downloading data for {len(videos)} videos now.')
+    #     output = os.path.join(self.raw, '%(autonumber)s')
+    #     cmd = f'youtube-dl -o "{output}" --skip-download --write-info-json -i -a {url_path}'
+    #     p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
+    #     line = True
+    #     while line:
+    #         line = p.stdout.readline().decode("utf-8").strip()
+    #         print(line)
 
     def deprecated_download_data_via_youtube_dl_login(self):
         """Uses youtube_dl to download individual json files for each video."""
@@ -297,6 +361,8 @@ class Analysis:
     def best_and_worst_videos(self):
         """Finds well liked and highly viewed videos"""
         self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
+        # less than 10 views 
+        # low_views = self.df[self.df['view_count'] < 10] 
         # less than 100 views 
         low_views = self.df[self.df['view_count'] < 100] 
         self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
@@ -362,7 +428,8 @@ class Analysis:
         self.grapher.gen_tags_plot()
 
     def start_analysis(self):
-        self.check_df()
+        # self.check_df()
+        check_df= Check_DF(self.df, self.ran, self.tags).run()
         if WordCloud is not None:
             self.make_wordcloud()
         self.compute()
@@ -374,7 +441,11 @@ class Analysis:
         some_data = os.path.isfile(file1)
         if not some_data:
             if self.takeout is not None:
-                self.download_data()
+                download_data = Download_Data(self.takeout, self.raw, self.path).run()
+
+
+                # # download_data.__init__
+                # self.download_data()
             else:
                 self.deprecated_download_data_via_youtube_dl_login()
         some_data = os.path.isfile(file1)
