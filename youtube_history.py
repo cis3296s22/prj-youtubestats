@@ -178,17 +178,17 @@ class Analysis:
         except Exception as e:
             print(f"Data download error: {e}")
         try: 
-            p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
+            # p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
             # p = sp.check_output(cmd, stderr=sp.STDOUT, shell=True)
-            # p = sp.run(cmd, capture_output=True, shell=True)
+            p = sp.run(cmd, capture_output=True, shell=True, check=True)
         except sp.CalledProcessError as e:
             print(f"Popen subprocess error: {e}\n")
             print(f"CalledProcessError return code: {sp.CalledProcessError.returncode}")
-        # print(p.stdout.decode("utf-8").strip())
-        line = True
-        while line:
-            line = p.stdout.readline().decode("utf-8").strip()
-            print(line)
+        print(p.stdout.decode("utf-8").strip())
+        # line = True
+        # while line:
+        #     line = p.stdout.decode("utf-8").strip()
+        #     print(line)
 
     def deprecated_download_data_via_youtube_dl_login(self):
         """Uses youtube_dl to download individual json files for each video."""
