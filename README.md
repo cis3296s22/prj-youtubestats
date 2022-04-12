@@ -50,7 +50,8 @@ or ```$ pip install certifi ``` using your terminal
 6) Sign into your YouTube account and create a new export of only your YouTube and YouTube Music data.
 7) Export only once in the form of a zip file and download.
 8) Extract the files from the zip folder into your downloads. This should create a takeout folder
-9) run youtube_history.py in your IDE terminal with:
+9) set up a virtual environment in your IDE using the same python version as your interpreter
+10) run youtube_history.py in your IDE terminal with:
     ``` $ python youtube_history.py --takeout /path/to/Takeout 
     Example: ``` user$ python youtube_history.py --takeout /U/Users/alec/Downloads/Takeout
 10) The program will open a window in a browser that displays your YouTube stats
