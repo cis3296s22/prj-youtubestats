@@ -43,17 +43,17 @@ to install the dependencies.
 3) Extract all of the files.
 4) Right click the folder that contains all the source code and open in your prefered IDE.
 5) install requirements by:
-    ``` $ pip install -r requirements.txt
+    `$ pip install -r requirements.txt`
 7) Install required Certificates:
 locate where you have python downloaded (/User/Applications/Python 3.10 and double click the folder, then double click "Install Certificates.command" 
-or ```$ pip install certifi ``` using your terminal
+or `$ pip install certifi` using your terminal
 6) Sign into your YouTube account and create a new export of only your YouTube and YouTube Music data.
 7) Export only once in the form of a zip file and download.
 8) Extract the files from the zip folder into your downloads. This should create a takeout folder
 9) set up a virtual environment in your IDE using the same python version as your interpreter
 10) run youtube_history.py in your IDE terminal with:
-    ``` $ python youtube_history.py --takeout /path/to/Takeout 
-    Example: ``` user$ python youtube_history.py --takeout /U/Users/alec/Downloads/Takeout
+    `$ python youtube_history.py --takeout /path/to/Takeout`
+    Example: `user$ python youtube_history.py --takeout /U/Users/alec/Downloads/Takeout`
 10) The program will open a window in a browser that displays your YouTube stats
 
 
