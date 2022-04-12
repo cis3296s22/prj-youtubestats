@@ -15,7 +15,6 @@ a = Analysis(['mac_youtube_history.py'],
                  ('/Users/I547137/Documents/GitHub/youtubestats/images.png', '.'), 
                  ('/Users/I547137/Documents/GitHub/youtubestats/venv/lib/python3.9/site-packages/wordcloud/stopwords', 'wordcloud'), 
                  ('/Users/I547137/Documents/GitHub/youtubestats/venv/bin/youtube-dl', '.'),
-                 ('/Users/I547137/Documents/GitHub/youtubestats/venv', 'venv'), 
                  ('/Users/I547137/Documents/GitHub/youtubestats/venv/lib/python3.9/site-packages/wordcloud/DroidSansMono.ttf', 'wordcloud')
              ],
              hiddenimports=[],

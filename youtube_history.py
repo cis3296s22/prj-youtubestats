@@ -5,7 +5,6 @@
 Downloads, analyzes, and reports all Youtube videos associated with a user's Google account.
 """
 
-from asyncio.windows_events import NULL
 import json
 import os
 import pickle
