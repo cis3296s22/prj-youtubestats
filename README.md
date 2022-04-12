@@ -8,7 +8,7 @@ The final results of the analysis should look pretty similar to mine:
 
 https://jessime.github.io/youtube_gh_pages/
 
-## Installation
+## Python Installation
 This script uses Python 3.x. If you don't have Python, I would recommend downloading it from [Anaconda](https://www.continuum.io/downloads).
 
 Copy or clone this package from Github.
@@ -22,6 +22,20 @@ Then, just run:
     $ pip install -r requirements.txt
 
 to install the dependencies.
+
+## Installation for Windows using source code.
+1) Download the source code.
+2) Extract all of the files.
+3) Right click the folder that contains all the source code and open in your prefered IDE.
+4) Install the recommended extenstions and update to the latest version of Python if you have not.
+5) Go to Google Takeout.
+6) Sign into your YouTube account and create a new export of only your YouTube and YouTube Music data.
+7) Export only once in the form of a zip file and download.
+8) Extract the files from the zip folder. Copy the path to the Takeout folder.
+9) Run the youtube_history.py file.
+10) Give the file the path to the Takeout folder.
+11) Wait for it to open in the browser with your analysis.
+
 
 ## Usage
 
