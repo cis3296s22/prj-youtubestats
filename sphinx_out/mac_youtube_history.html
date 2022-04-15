@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>mac_youtube_history module &#8212; YoutubeStats 1.2.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-mac_youtube_history">
+<span id="mac-youtube-history-module"></span><h1>mac_youtube_history module<a class="headerlink" href="#module-mac_youtube_history" title="Permalink to this headline">¶</a></h1>
+<p>Downloads, analyzes, and reports all Youtube videos associated with a user’s Google account.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mac_youtube_history.</span></span><span class="sig-name descname"><span class="pre">Analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">takeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Analysis is responsible for downloading and analyzing the takeout data from google.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>takeout</strong> (<em>str</em>) – Path to an unzipped Takeout folder downloaded from <a class="reference external" href="https://takeout.google.com/">https://takeout.google.com/</a></p></li>
+<li><p><strong>outpath</strong> (<em>str</em><em>, </em><em>optional</em>) – path to the directory where both raw and computed results should be stored, defaults to data</p></li>
+<li><p><strong>delay</strong> (<em>float</em>) – Amount of time in seconds to wait between requests, defaults to 0</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.calc_most_played_artist_watchtime">
+<span class="sig-name descname"><span class="pre">calc_most_played_artist_watchtime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.calc_most_played_artist_watchtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the total watchtime for the most played artist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.check_df">
+<span class="sig-name descname"><span class="pre">check_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.check_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check to see if a dataframe from a previous run exists, if so read from it 
+if not then make a new dataframe</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes total time, 
+most liked videos, 
+most emojis in description, 
+10 oldest videos
+oldest upload date
+and the three randoms function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.deprecated_download_data_via_youtube_dl_login">
+<span class="sig-name descname"><span class="pre">deprecated_download_data_via_youtube_dl_login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.deprecated_download_data_via_youtube_dl_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses users google credentials to download individual json files for each video.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.df_from_files">
+<span class="sig-name descname"><span class="pre">df_from_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.df_from_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a Dataframe from the downloaded json files and saves it in the ran data folder 
+for use if the progarm is run again.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.download_data">
+<span class="sig-name descname"><span class="pre">download_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.download_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loops through takeout data and downloads a json data file for each entry using youtube-dl</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.funniest_description">
+<span class="sig-name descname"><span class="pre">funniest_description</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.funniest_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts number of times ‘funny’ is in each description and saves top result.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a grapher object and runs all graphing functions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.make_wordcloud">
+<span class="sig-name descname"><span class="pre">make_wordcloud</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.make_wordcloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a wordcloud and then sves it as an image for display in the browser.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.most_emojis_description">
+<span class="sig-name descname"><span class="pre">most_emojis_description</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.most_emojis_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the video description with the most emojis in it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.random_section">
+<span class="sig-name descname"><span class="pre">random_section</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.random_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the number of HD and UHD videos watched, 
+the top uploader that you watched, 
+the most played artist, 
+and the description with the “funniest” description</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if there is data from a previous run, if not downloads the data
+if there is start the analysis immediately</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.start_analysis">
+<span class="sig-name descname"><span class="pre">start_analysis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.start_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins the analysis of the data thats been downloaded</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.top_viewed">
+<span class="sig-name descname"><span class="pre">top_viewed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.top_viewed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds videos with less than 100 views then splits the data set into 
+10 equal sized groups and gets the videos with the highest and lowest view count per 
+group.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mac_youtube_history.Analysis.total_time">
+<span class="sig-name descname"><span class="pre">total_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.Analysis.total_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculte The amount of time spent watching videos.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mac_youtube_history.index">
+<span class="sig-prename descclassname"><span class="pre">mac_youtube_history.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mac_youtube_history.launch_web">
+<span class="sig-prename descclassname"><span class="pre">mac_youtube_history.</span></span><span class="sig-name descname"><span class="pre">launch_web</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.launch_web" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launches the HTML page with the analysis results</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mac_youtube_history.make_fake_series">
+<span class="sig-prename descclassname"><span class="pre">mac_youtube_history.</span></span><span class="sig-name descname"><span class="pre">make_fake_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N/A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">webpage_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N/A'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mac_youtube_history.make_fake_series" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">YoutubeStats</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Group.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/mac_youtube_history.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
