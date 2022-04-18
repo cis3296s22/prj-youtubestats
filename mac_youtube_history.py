@@ -123,7 +123,7 @@ class Analysis:
         output = os.path.join(self.raw, '%(autonumber)s')
         full_path = os.path.join(os.getcwd(), output)
         try:
-            # NEED THE ./ BEFORE THE COMMAND ON MAC
+            # NEED THE ./ BEFORE THE COMMAND ON MAC FOR THE EXECUTABLE
             cmd = f'./youtube-dl -o "{full_path}" --skip-download --write-info-json -i -a {url_path}'
         except Exception as e:
             print(f"Data download error: {e}")
