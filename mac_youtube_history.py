@@ -391,7 +391,7 @@ class Analysis:
         self.most_emojis_description()
         self.oldest_videos = self.df[['title', 'webpage_url']].tail(n=10)
         self.oldest_upload = self.df.loc[self.df['upload_date'].idxmin()]
-        self.three_randoms()
+        self.random_section()
         self.calc_most_played_artist_watchtime()
 
     def graph(self):
