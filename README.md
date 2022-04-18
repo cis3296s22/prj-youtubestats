@@ -4,30 +4,20 @@ This package locally downloads the metadata for all video in a user's Youtube hi
 
 ## Example
 
-The final results of the analysis should look pretty similar to mine:
+The final results of the analysis should look something like this:
 
-https://jessime.github.io/youtube_gh_pages/
+ADD SCREENSHOT!!!!!!!!!!!!!!!
 
 ## Python Installation
-This script uses Python 3.x. If you don't have Python, I would recommend downloading it from [Anaconda](https://www.continuum.io/downloads).
+This script uses Python 3.x. If you don't have Python download it from [the Python website](https://www.python.org/).
 
 Copy or clone this package from Github.
-
-Open the Terminal/Command Line and navigate to where you copied the package:
-
-    $ cd path/to/copied/directory
-
-Then, just run:
-
-    $ pip install -r requirements.txt
-
-to install the dependencies.
 
 ## Installation for Windows using source code.
 1) Download the source code.
 2) Extract all of the files.
 3) Right click the folder that contains all the source code and open in your prefered IDE.
-4) Install the recommended extenstions and update to the latest version of Python if you have not.
+4) Install the recommended extenstions by typing `pip install -r requirements.txt` and update to the latest version of Python if you have not.
 5) Go to Google Takeout.
 6) Sign into your YouTube account and create a new export of only your YouTube and YouTube Music data.
 7) Export only once in the form of a zip file and download.
@@ -46,7 +36,7 @@ to install the dependencies.
     `$ pip install -r requirements.txt`
 7) Install required Certificates:
 locate where you have python downloaded (/User/Applications/Python 3.10 and double click the folder, then double click "Install Certificates.command" 
-or `$ pip install certifi` using your terminal
+or `$ pip install certificates` using your terminal
 6) Sign into your YouTube account and create a new export of only your YouTube and YouTube Music data.
 7) Export only once in the form of a zip file and download.
 8) Extract the files from the zip folder into your downloads. This should create a takeout folder
@@ -56,17 +46,13 @@ or `$ pip install certifi` using your terminal
     Example: `user$ python youtube_history.py --takeout /U/Users/alec/Downloads/Takeout`
 10) The program will open a window in a browser that displays your YouTube stats
 
-
-
-
-
 ## Usage
 
 There are currently two options for downloading data.
 The prefered method is to use [Google Takeout](https://takeout.google.com/).
 Make sure `YouTube and YouTube Music` is checked and follow directions to download the zip file.
-It'll take 10-30 minutes to recieve an email from Google saying your job is done.
-Unzip your downloaded file and pass it as a command line parameter:
+It will take 10-30 minutes to recieve an email from Google saying your download is ready.
+Unzip your downloaded file and pass the path to the **entire** Takeout folder as a command line parameter:
 
     $ python youtube_history.py --takeout /path/to/Takeout
     
@@ -74,8 +60,8 @@ The specific file we're looking for is `YouTube and YouTube Music/history/watch-
 So make sure at least that one file exists in the `Takeout` directory.
     
 ### Downloading with `youtube-dl`
-If you're more of a gambler, you can try using `youtube-dl` to download your data.
-Just do:
+You can also try using `youtube-dl` to download your data.
+Just run:
 
     $ python youtube_history.py
 
@@ -97,7 +83,7 @@ To specify any non-default directory for the data, run:
     $ python youtube_history.py -o /path/to/empty/data/directory/
 
 Once raw metadata is downloaded to the default data directory, this step is skipped in future runs to save time.
-If you want to download a second dataset, you'll have to point the script to a new directory.
+**If you want to download a second dataset, you'll have to point the script to a new directory.**
 (Or you can manually clear out the default `/data` folder). 
 
 ## Questions and Comments
