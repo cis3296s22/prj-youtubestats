@@ -1,0 +1,7 @@
+mac\_youtube\_history module
+============================
+
+.. automodule:: mac_youtube_history
+   :members:
+   :undoc-members:
+   :show-inheritance:

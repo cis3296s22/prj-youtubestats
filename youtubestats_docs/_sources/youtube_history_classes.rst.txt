@@ -1,0 +1,7 @@
+youtube\_history\_classes module
+================================
+
+.. automodule:: youtube_history_classes
+   :members:
+   :undoc-members:
+   :show-inheritance:

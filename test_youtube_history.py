@@ -56,7 +56,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertTrue(self.analysis.oldest_videos is not None)
         self.assertTrue(self.analysis.oldest_upload is not None)
 
-    def test_three_randoms(self):
+    def test_random_section(self):
         self.assertTrue(self.analysis.HD is not None)
         self.assertTrue(self.analysis.UHD is not None)
         self.assertTrue(self.analysis.top_uploaders is not None)
@@ -70,7 +70,7 @@ class TestAnalysis(unittest.TestCase):
 
     def test_avg_rate_plot(self):
         grapher = self.graph_set_up()
-        grapher.average_rating()
+        grapher.release_year_graph()
         self.assertTrue(grapher.avg_rate_plot is not None)
 
     def test_duration_plot(self):

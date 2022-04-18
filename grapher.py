@@ -15,32 +15,18 @@ def flatten_without_nones(seq):
 
 
 class Grapher():
-    """Creates html-embeddable interactive graphs of Youtube data using plotly.
-    
-    Parameters
-    ----------
-    df : Dataframe
-        Users youtube data
-    tags : [[str]]
-        A list of tags for each downloaded video
-        
-    Attributes
-    ----------
-    plot : func
-        Alias for plotly's main plotting function
-    avg_rate_plot : str
-        html <div> of a plotly histogram of the average ratings for each video
-    duration : str
-        html <div> of a plotly histogram of video durations on a log scale
-    views_plot : str
-        html <div> of a plotly histogram of video views on a log scale
-    tags_plot : str
-        html <div> of a plotly scatterplot of most common rollings tags
+    """
+    Creates html-embeddable interactive graphs of Youtube data using plotly.
+
+    :param df: Filled dataframe with users takeout data 
+    :type df: Dataframe
+
+    :param tags: List of tags for each downloaded video
+    :type tags: list
     """
     def __init__(self, df, tags):
         self.df = df
         self.tags = tags
-        
         self.plot = plotly.offline.plot
         self.avg_rate_plot = None
         self.duration_plot = None
@@ -48,40 +34,38 @@ class Grapher():
         self.tags_plot = None        
         
     def make_log_data(self, series, dec=2):
-        """Log10 transforms all data before plotting.
+        """
+        Transforms all data before plotting.
         
-        Parameters
-        ----------
-        series : Series
-            The data values to log transform
-        dec : int (default=2)
-            The number of decimals to round to for tick labels
-            
-        Returns
-        -------
-        log : Series
-            The log transformed series
-        ticks : ndarray
-            Physical locations (positions) of the tick labels on the plot
-        ticks_txt : ndarray
-            Tick labels, on log scale, at each of the tick positions"""
+        :param series: The data values to log transform
+        :type series: Series
+
+        :param dec: The number of decimals to round to for tick labels, defaults to 2
+        :type dec: int 
+
+        :return log: The log transformed series
+        :rtype log: Series
+
+        :return ticks: Physical locations (positions) of the tick labels on the plot
+        :rtype ticks: ndarray
+
+        :return ticks_txt: Tick labels, on log scale, at each of the tick positions
+        :rtype ticks_txt: ndarray
+        """
         log = np.log10(series)
         ticks = np.linspace(min(log), max(log), 10)
         ticks_txt = np.round(np.power(10, ticks), decimals=dec)
         return log, ticks, ticks_txt
 
     def humanize(self, num):
-        """Converts large int values into human readable strings
+        """
+        Converts large int values into human readable strings
         
-        Parameters
-        ----------
-        num : int
-            The large value to convert
-            
-        Returns
-        -------
-        num : str
-            Formatted value
+        :param num: value to convert
+        :type num: int
+
+        :return: formatted value
+        :rtype: str
         """
         millnames = ['',' K',' M',' B',' T']
         n = float(num)
@@ -91,9 +75,10 @@ class Grapher():
         num_str = '{:.0f}{}'.format(n / 10**(3 * millidx), millnames[millidx])
         return num_str
         
-    def average_rating(self):
-        # data = [go.Histogram(x=self.df.average_rating,
-        #                      marker=dict(color='#673AB7'))]
+    def release_year_graph(self):
+        """
+        Creates a graph of release years
+        """
         data = [go.Histogram(x=self.df.release_year,
                              marker=dict(color='#673AB7'))]
         layout = dict(title='Release Years',
@@ -102,7 +87,10 @@ class Grapher():
         fig = dict(data=data, layout=layout)
         self.avg_rate_plot = self.plot(fig,  output_type='div')
     
-    def duration(self):  
+    def duration(self): 
+        """
+        Plots the duration of all videos watched
+        """ 
         dur, ticks, ticks_txt = self.make_log_data(self.df.duration/60)
         data = [go.Histogram(x=dur,
                              marker=dict(color='#673AB7'))]
@@ -116,6 +104,9 @@ class Grapher():
         self.duration_plot = self.plot(fig,  output_type='div')
         
     def views(self):
+        """
+        Plots graph of view counts
+        """
         views, ticks, ticks_txt = self.make_log_data(self.df.view_count, 0)
         ticks_txt = [self.humanize(t) for t in ticks_txt]
         data = [go.Histogram(x=views,
@@ -130,19 +121,18 @@ class Grapher():
         self.views_plot = self.plot(fig, output_type='div')
         
     def get_max_tags_and_vals(self):
-        """Finds the rolling tags and their value counts over chunks of 100 videos
+        """
+        Finds the rolling value count of tags over chunks of 100 videos
+        i.e. make a graph of the average tag count per 100 videos
         
-        Returns
-        -------
-        max_tags : [str]
-            Most popular tags in each chunk of videos
-        max_values : [int]
-            The number of times the most popular tag appears
+        :return max_tags: Most popular tags in each chunk of videos
+        :rtype max_tags: list of str
+        :return max_values: The number of times the most popular tag appears
+        :rtype max_values: list of int
         """
         max_tags = []
         max_values = []
         chunk_starts = [i for i in range(0, len(self.tags), 100)]
-        
         for i in chunk_starts:
             chunk = flatten_without_nones(self.tags[i:i+100])
             counted_chunk = Counter(chunk)
@@ -152,6 +142,9 @@ class Grapher():
         return max_tags, max_values
 
     def gen_tags_plot(self):
+        """
+        Generate plot of most popular tags
+        """
         chunk_starts = [i for i in range(0, len(self.tags), 100)]
         max_tags, max_values = self.get_max_tags_and_vals()
         data = [go.Scatter(x=chunk_starts,
