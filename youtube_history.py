@@ -123,7 +123,7 @@ class Analysis:
         output = os.path.join(self.raw, '%(autonumber)s')
         full_path = os.path.join(os.getcwd(), output)
         try:
-            # NEED THE ./ BEFORE THE COMMAND ON MAC
+            # NEED THE ./ BEFORE THE COMMAND ON MAC EXECUTABLE
             cmd = f'youtube-dl -o "{full_path}" --skip-download --write-info-json -i -a {url_path}'
         except Exception as e:
             print(f"Data download error: {e}")
@@ -246,29 +246,6 @@ class Analysis:
                 result.append("{} {}".format(int(value), name))
         self.formatted_time = ', '.join(result)
 
-    def calc_most_played_artist_watchtime(self):
-        """
-        Compute the total watchtime for the most played artist
-        """
-        seconds = self.df.duration.sum()
-        intervals = (
-            ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
-            ('weeks', 604800),    # 60 * 60 * 24 * 7
-            ('days', 86400),      # 60 * 60 * 24
-            ('hours', 3600),      # 60 * 60
-            ('minutes', 60),
-            ('seconds', 1)
-            )
-        result = []
-        for name, count in intervals:
-            value = seconds // count
-            if value:
-                seconds -= value * count
-                if value == 1:
-                    name = name.rstrip('s')
-                result.append("{} {}".format(int(value), name))
-        self.formatted_time = ', '.join(result)
-
     def top_viewed(self):
         """
         Finds videos with less than 100 views then splits the data set into 
@@ -335,46 +312,46 @@ class Analysis:
         self.funniest_description()
         
     def calc_most_played_artist_watchtime(self):
-        """Compute the total watchtime for the most played artist"""
-        """get a boolean dataframe to determine the indices of the videos by the most played uploader"""
-        result_df = self.df['uploader'].isin(self.most_played_artist)
-        """Initialize array to store the indices of the videos by the most played uploader"""
-        most_played_indices_arr = []
-        """Populate the array with the correct indices"""
-        for ind in result_df.index:
-            if result_df[ind] == True:
-                most_played_indices_arr.append(ind)
+            """Compute the total watchtime for the most played artist"""
+            """get a boolean dataframe to determine the indices of the videos by the most played uploader"""
+            result_df = self.df['uploader'].isin(self.most_played_artist)
+            """Initialize array to store the indices of the videos by the most played uploader"""
+            most_played_indices_arr = []
+            """Populate the array with the correct indices"""
+            for ind in result_df.index:
+                if result_df[ind] == True:
+                    most_played_indices_arr.append(ind)
+                
+            print(most_played_indices_arr)
+            """Generate a pruned dataframe with only the videos by the most played uploader"""
+            pruned_df = self.df.iloc[most_played_indices_arr]
+            # print(pruned_df)
             
-        print(most_played_indices_arr)
-        """Generate a pruned dataframe with only the videos by the most played uploader"""
-        pruned_df = self.df.iloc[most_played_indices_arr]
-        print(pruned_df)
-        
-        seconds = pruned_df.duration.sum()
-        print(seconds)
-        
-        
-        intervals = (
-            ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
-            ('weeks', 604800),    # 60 * 60 * 24 * 7
-            ('days', 86400),      # 60 * 60 * 24
-            ('hours', 3600),      # 60 * 60
-            ('minutes', 60),
-            ('seconds', 1)
-            )
+            seconds = pruned_df.duration.sum()
+            # print(seconds)
+            
+            
+            intervals = (
+                ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
+                ('weeks', 604800),    # 60 * 60 * 24 * 7
+                ('days', 86400),      # 60 * 60 * 24
+                ('hours', 3600),      # 60 * 60
+                ('minutes', 60),
+                ('seconds', 1)
+                )
 
-        result = []
+            result = []
 
-        for name, count in intervals:
-            value = seconds // count
-            if value:
-                seconds -= value * count
-                if value == 1:
-                    name = name.rstrip('s')
-                result.append("{} {}".format(int(value), name))
-        self.most_played_uploader_watchtime = ', '.join(result)
-        
-        print(self.most_played_uploader_watchtime)
+            for name, count in intervals:
+                value = seconds // count
+                if value:
+                    seconds -= value * count
+                    if value == 1:
+                        name = name.rstrip('s')
+                    result.append("{} {}".format(int(value), name))
+            self.most_played_uploader_watchtime = ', '.join(result)
+            
+            # print(self.most_played_uploader_watchtime)
 
     def compute(self):
         """

@@ -246,29 +246,6 @@ class Analysis:
                 result.append("{} {}".format(int(value), name))
         self.formatted_time = ', '.join(result)
 
-    def calc_most_played_artist_watchtime(self):
-        """
-        Compute the total watchtime for the most played artist
-        """
-        seconds = self.df.duration.sum()
-        intervals = (
-            ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
-            ('weeks', 604800),    # 60 * 60 * 24 * 7
-            ('days', 86400),      # 60 * 60 * 24
-            ('hours', 3600),      # 60 * 60
-            ('minutes', 60),
-            ('seconds', 1)
-            )
-        result = []
-        for name, count in intervals:
-            value = seconds // count
-            if value:
-                seconds -= value * count
-                if value == 1:
-                    name = name.rstrip('s')
-                result.append("{} {}".format(int(value), name))
-        self.formatted_time = ', '.join(result)
-
     def top_viewed(self):
         """
         Finds videos with less than 100 views then splits the data set into 
@@ -348,10 +325,10 @@ class Analysis:
         print(most_played_indices_arr)
         """Generate a pruned dataframe with only the videos by the most played uploader"""
         pruned_df = self.df.iloc[most_played_indices_arr]
-        print(pruned_df)
+        # print(pruned_df)
         
         seconds = pruned_df.duration.sum()
-        print(seconds)
+        # print(seconds)
         
         
         intervals = (
@@ -374,7 +351,7 @@ class Analysis:
                 result.append("{} {}".format(int(value), name))
         self.most_played_uploader_watchtime = ', '.join(result)
         
-        print(self.most_played_uploader_watchtime)
+        # print(self.most_played_uploader_watchtime)
 
     def compute(self):
         """
