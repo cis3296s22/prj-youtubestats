@@ -8,7 +8,7 @@ The final results of the analysis should look pretty similar to mine:
 
 https://jessime.github.io/youtube_gh_pages/
 
-## Installation
+## Python Installation
 This script uses Python 3.x. If you don't have Python, I would recommend downloading it from [Anaconda](https://www.continuum.io/downloads).
 
 Copy or clone this package from Github.
@@ -22,6 +22,43 @@ Then, just run:
     $ pip install -r requirements.txt
 
 to install the dependencies.
+
+## Installation for Windows using source code.
+1) Download the source code.
+2) Extract all of the files.
+3) Right click the folder that contains all the source code and open in your prefered IDE.
+4) Install the recommended extenstions and update to the latest version of Python if you have not.
+5) Go to Google Takeout.
+6) Sign into your YouTube account and create a new export of only your YouTube and YouTube Music data.
+7) Export only once in the form of a zip file and download.
+8) Extract the files from the zip folder. Copy the path to the Takeout folder.
+9) Run the youtube_history.py file.
+10) Give the file the path to the Takeout folder.
+11) Wait for it to open in the browser with your analysis.
+
+## Installation for MacOS using source code in an IDE.
+
+1) Download the source code.
+2) Download to latest version of Python (Python 3.10 is a good one)
+3) Extract all of the files.
+4) Right click the folder that contains all the source code and open in your prefered IDE.
+5) install requirements by:
+    `$ pip install -r requirements.txt`
+7) Install required Certificates:
+locate where you have python downloaded (/User/Applications/Python 3.10 and double click the folder, then double click "Install Certificates.command" 
+or `$ pip install certifi` using your terminal
+6) Sign into your YouTube account and create a new export of only your YouTube and YouTube Music data.
+7) Export only once in the form of a zip file and download.
+8) Extract the files from the zip folder into your downloads. This should create a takeout folder
+9) set up a virtual environment in your IDE using the same python version as your interpreter
+10) run youtube_history.py in your IDE terminal with:
+    `$ python youtube_history.py --takeout /path/to/Takeout`
+    Example: `user$ python youtube_history.py --takeout /U/Users/alec/Downloads/Takeout`
+10) The program will open a window in a browser that displays your YouTube stats
+
+
+
+
 
 ## Usage
 

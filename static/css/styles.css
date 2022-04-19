@@ -263,12 +263,6 @@ html, body {
   z-index: 99;
 }
 
-.avatar {
-  border-radius: 50%;
-  width: auto;
-  height: 30px;
-}
-
 .demo-list-three {
   width: 650px;
 }
