@@ -23,16 +23,16 @@ from flask import render_template
 from bs4 import BeautifulSoup
 from emoji import emoji_lis
 from grapher import Grapher, flatten_without_nones
+import googleapiclient.discovery
+# API information
+api_service_name = "youtube"
+api_version = "v3"
+# API key
+DEVELOPER_KEY = "AIzaSyCEHEFHIpW-E0BrRtnn8RW9ceCP514M-kQ"
+# API client
+youtube = googleapiclient.discovery.build(
+    api_service_name, api_version, developerKey = DEVELOPER_KEY)
 
-DEPRECATION_NOTE = """
-This method of downloading data is deprecated. 
-It uses youtube-dl to login to your Google account.
-This is error-prone, as Google may think you are a bot.
-Instead, you should go to https://takeout.google.com/,
-and follow directions there to download your "YouTube and YouTube Music" data.
-Then you can re-run this program specifying the `--takeout` flag,
-pointing to the *unzipped* directory you downloaded from Google.
-"""
 
 app = Flask(__name__)
 
@@ -58,6 +58,19 @@ def make_fake_series(title='N/A', webpage_url='N/A', **kwargs):
     params = ['title', 'webpage_url'] + list(kwargs.keys())
     Mock = namedtuple('MockSeries', params)
     return Mock(title, webpage_url, **kwargs)
+
+class Uploader:
+    def __init__(self, uploader, uploader_id, image_url, count):
+        self.uploader = uploader
+        self.uploader_id = uploader_id
+        self.image_url = image_url
+        self.count = count
+        
+    def get_contents(self):
+        print(self.uploader)
+        print(self.uploader_id)
+        print(self.image_url)
+        
 
 
 class Analysis:
@@ -246,29 +259,6 @@ class Analysis:
                 result.append("{} {}".format(int(value), name))
         self.formatted_time = ', '.join(result)
 
-    def calc_most_played_artist_watchtime(self):
-        """
-        Compute the total watchtime for the most played artist
-        """
-        seconds = self.df.duration.sum()
-        intervals = (
-            ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
-            ('weeks', 604800),    # 60 * 60 * 24 * 7
-            ('days', 86400),      # 60 * 60 * 24
-            ('hours', 3600),      # 60 * 60
-            ('minutes', 60),
-            ('seconds', 1)
-            )
-        result = []
-        for name, count in intervals:
-            value = seconds // count
-            if value:
-                seconds -= value * count
-                if value == 1:
-                    name = name.rstrip('s')
-                result.append("{} {}".format(int(value), name))
-        self.formatted_time = ', '.join(result)
-
     def top_viewed(self):
         """
         Finds videos with less than 100 views then splits the data set into 
@@ -330,11 +320,36 @@ class Analysis:
         height = self.df['height'].astype(int)
         self.HD = self.df[(720 <= height) & (height <= 1080)].shape[0]
         self.UHD = self.df[height > 1080].shape[0]
-        self.top_uploaders = self.df.uploader.value_counts().head(n=15)
         self.most_played_artist = self.df['uploader'].mode()
         self.funniest_description()
         
-    def calc_most_played_artist_watchtime(self):
+    def get_top_uploaders(self):
+        channels_id_series = self.df.channel_id.value_counts().head(n=15)
+        print(channels_id_series)
+        channels_id_arr = []
+        top_uploaders = []
+        for channel_id, occurrence_count in channels_id_series.items():
+            channels_id_arr.append(channel_id)
+        joined_string = ",".join(channels_id_arr)
+        request = youtube.channels().list(
+            part="snippet",
+            id=joined_string
+        )
+        # Request execution
+        response = request.execute()
+        for key, val in response.items():
+            if key == "items":
+                for item in val:
+                    uploader_id = item["id"]
+                    uploader = item["snippet"]["title"]
+                    image_url = item["snippet"]["thumbnails"]["medium"]["url"]
+                    count = channels_id_series.get(uploader_id)
+                    top_uploader = Uploader(uploader, uploader_id, image_url, count)
+                    top_uploaders.append(top_uploader)
+        self.top_uploaders = top_uploaders
+                    
+        
+    def calc_most_played_uploader_watchtime(self):
         """Compute the total watchtime for the most played artist"""
         """get a boolean dataframe to determine the indices of the videos by the most played uploader"""
         result_df = self.df['uploader'].isin(self.most_played_artist)
@@ -345,14 +360,10 @@ class Analysis:
             if result_df[ind] == True:
                 most_played_indices_arr.append(ind)
             
-        print(most_played_indices_arr)
         """Generate a pruned dataframe with only the videos by the most played uploader"""
         pruned_df = self.df.iloc[most_played_indices_arr]
-        print(pruned_df)
         
         seconds = pruned_df.duration.sum()
-        print(seconds)
-        
         
         intervals = (
             ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
@@ -374,8 +385,6 @@ class Analysis:
                 result.append("{} {}".format(int(value), name))
         self.most_played_uploader_watchtime = ', '.join(result)
         
-        print(self.most_played_uploader_watchtime)
-
     def compute(self):
         """
         Computes total time, 
@@ -392,7 +401,9 @@ class Analysis:
         self.oldest_videos = self.df[['title', 'webpage_url']].tail(n=10)
         self.oldest_upload = self.df.loc[self.df['upload_date'].idxmin()]
         self.random_section()
-        self.calc_most_played_artist_watchtime()
+        self.get_top_uploaders()
+        #self.get_images()
+        self.calc_most_played_uploader_watchtime()
 
     def graph(self):
         """
