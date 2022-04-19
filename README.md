@@ -6,7 +6,7 @@ This package locally downloads the metadata for all video in a user's Youtube hi
 
 The final results of the analysis should look something like this:
 
-ADD SCREENSHOT!!!!!!!!!!!!!!!
+![image](https://user-images.githubusercontent.com/61132056/163987195-307ee99c-b938-4fcc-89c1-34d2963c2d25.png)
 
 ## Python Installation
 This script uses Python 3.x. If you don't have Python download it from [the Python website](https://www.python.org/).
