@@ -3,19 +3,21 @@
 
 block_cipher = None
 
-a = Analysis(['mac_youtube_history.py'],
-             pathex=[],
+a = Analysis(['youtube_history.py'],
+             pathex=[(r'C:\School\cis3296\youtubestats\venv\Lib\site-packages')],
              binaries=[],
              datas=[
-                 ('/Users/I547137/Documents/GitHub/youtubestats/data', 'data'), 
-                 ('/Users/I547137/Documents/GitHub/youtubestats/data/urls.txt', 'data'),
-                 ('/Users/I547137/Documents/GitHub/youtubestats/static', 'static'),
-                 ('/Users/I547137/Documents/GitHub/youtubestats/templates', 'templates'),
-                 ('/Users/I547137/Documents/GitHub/youtubestats/grapher.py', '.'),
-                 ('/Users/I547137/Documents/GitHub/youtubestats/images.png', '.'), 
-                 ('/Users/I547137/Documents/GitHub/youtubestats/venv/lib/python3.9/site-packages/wordcloud/stopwords', 'wordcloud'), 
-                 ('/Users/I547137/Documents/GitHub/youtubestats/venv/bin/youtube-dl', '.'),
-                 ('/Users/I547137/Documents/GitHub/youtubestats/venv/lib/python3.9/site-packages/wordcloud/DroidSansMono.ttf', 'wordcloud')
+                 (r'C:\School\cis3296\youtubestats\data', 'data'), 
+                 (r'C:\School\cis3296\youtubestats\data\urls.txt', 'data'),
+                 (r'C:\School\cis3296\youtubestats\data\ran', 'data'),
+                 (r'C:\School\cis3296\youtubestats\data\raw', 'data'),
+                 (r'C:\School\cis3296\youtubestats\static', 'static'),
+                 (r'C:\School\cis3296\youtubestats\templates', 'templates'),
+                 (r'C:\School\cis3296\youtubestats\grapher.py', '.'),
+                 (r'C:\School\cis3296\youtubestats\images.png', '.'), 
+                 (r'C:\School\cis3296\youtubestats\venv\Lib\site-packages\wordcloud\stopwords', 'wordcloud'), 
+                 (r'C:\School\cis3296\youtubestats\venv\Scripts\youtube-dl.exe', '.'),
+                 (r'C:\School\cis3296\youtubestats\venv\lib\site-packages\wordcloud\DroidSansMono.ttf', 'wordcloud')
              ],
              hiddenimports=[],
              hookspath=[],

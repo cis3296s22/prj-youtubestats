@@ -10,23 +10,19 @@ import pickle
 import argparse
 import getpass
 import subprocess as sp
-import sys
+import sys 
 
 from collections import namedtuple
 from pathlib import Path
 from webbrowser import open_new_tab
-
 import pandas as pd
 import numpy as np
-
 from wordcloud import WordCloud, STOPWORDS
 from flask import Flask
 from flask import render_template
 from bs4 import BeautifulSoup
 from emoji import emoji_lis
-
 from grapher import Grapher, flatten_without_nones
-
 
 DEPRECATION_NOTE = """
 This method of downloading data is deprecated. 
@@ -36,18 +32,18 @@ Instead, you should go to https://takeout.google.com/,
 and follow directions there to download your "YouTube and YouTube Music" data.
 Then you can re-run this program specifying the `--takeout` flag,
 pointing to the *unzipped* directory you downloaded from Google.
-
-Do you want to continue anyway? [y/n]: 
 """
 
 app = Flask(__name__)
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html', analysis=analysis)
 
 def launch_web():
+    """
+    Launches the HTML page with the analysis results 
+    """
     app.debug = False
     app.secret_key = 'this key should be complex'
 
@@ -58,7 +54,6 @@ def launch_web():
         open_new_tab(url)
         app.run()
 
-
 def make_fake_series(title='N/A', webpage_url='N/A', **kwargs):
     params = ['title', 'webpage_url'] + list(kwargs.keys())
     Mock = namedtuple('MockSeries', params)
@@ -66,60 +61,16 @@ def make_fake_series(title='N/A', webpage_url='N/A', **kwargs):
 
 
 class Analysis:
-    """Main class responsible for downloading and analyzing data.
+    """Analysis is responsible for downloading and analyzing the takeout data from google.
 
-    Parameters
-    ----------
-    takeout : Optional[str]
-        'Path to an unzipped Takeout folder downloaded from https://takeout.google.com/'
-    outpath : str (default='data')
-        The path to the directory where both raw and computed results should be stored.
-    delay : float (default=0)
-        Amount of time in seconds to wait between requests.
+    :param takeout: Path to an unzipped Takeout folder downloaded from https://takeout.google.com/
+    :type takeout: str
 
-    Attributes
-    ----------
-    raw : str
-        Path to 'raw' directory in self.path directory
-    ran : str
-        Path to 'ran' directory in self.path directory
-    df : Dataframe
-        Pandas Dataframe used to store compiled results
-    tags : [[str]]
-        A list of tags for each downloaded video
-    grapher : Grapher
-        Creates the interactive graphs portion of the analysis
-
-    seconds : int
-        The sum of video durations
-    formatted_time : str
-        Seconds converted to W/D/H/M/S format
-    most_viewed : Series
-        Video with the most total views
-    least_viewed : DataFrame
-        Collection of at most 10 videos with single digit views
-    best_per_decile : DataFrame
-        10 videos, one per view_count decile, where each video as the highest average rating in that decile
-    worse_per_decile : DataFrame
-        Same as best_per_decile, but lowest average rating
-    emojis: Series
-        Video with the most unique emojis in the description
-    oldest_videos : Dataframe
-        First 10 videos watched on user's account.
-    oldest_upload : Series
-        Video with the oldest upload date to youtube.
-    HD : int
-        The number of videos that have high-definition resolution
-    UHD : int
-        The number of videos that have ultra-high-definition resolution
-    top_uploaders : Series
-        The most watched channel names with corresponding video counts
-    most_played_artist 
-        The mode (most occurences) of an artist in the data set
-    funny_counts : int
-        The max number of times a video's description says the word 'funny'
-    funny : Series
-        The 'funniest' video as determined by funny_counts
+    :param outpath: path to the directory where both raw and computed results should be stored, defaults to data
+    :type outpath: str, optional 
+    
+    :param delay: Amount of time in seconds to wait between requests, defaults to 0
+    :type delay: float
     """
     def __init__(self, takeout=None, outpath='data', delay=0):
         self.takeout = Path(takeout).expanduser()
@@ -150,7 +101,9 @@ class Analysis:
         self.funny_counts = None
 
     def download_data(self):
-        """Uses Takeout to download individual json files for each video."""
+        """Loops through takeout data and downloads a json data file for each entry using youtube-dl
+    
+        """
         watch_history = self.takeout / 'YouTube and YouTube Music/history/watch-history.html'
         if not watch_history.is_file():
             raise ValueError(f'"{watch_history}" is not a file. Did you download your YouTube data? ')
@@ -159,6 +112,8 @@ class Analysis:
             text = watch_history.read_text()
         except UnicodeDecodeError:
             text = watch_history.read_text(encoding='utf-8')
+        else: #if we get to this block just omit the entry
+            pass
         soup = BeautifulSoup(text, 'html.parser')
         urls = [u.get('href') for u in soup.find_all('a')]
         videos = [u for u in urls if 'www.youtube.com/watch' in u]
@@ -166,15 +121,26 @@ class Analysis:
         url_path.write_text('\n'.join(videos))
         print(f'Urls extracted. Downloading data for {len(videos)} videos now.')
         output = os.path.join(self.raw, '%(autonumber)s')
-        cmd = f'./youtube-dl -o "{output}" --skip-download --write-info-json -i -a {url_path}'
-        p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
+        full_path = os.path.join(os.getcwd(), output)
+        try:
+            # NEED THE ./ BEFORE THE COMMAND ON MAC
+            cmd = f'./youtube-dl -o "{full_path}" --skip-download --write-info-json -i -a {url_path}'
+        except Exception as e:
+            print(f"Data download error: {e}")
+        try: 
+            p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
+        except sp.CalledProcessError as e:
+            print(f"Popen subprocess error: {e}\n")
+            print(f"CalledProcessError return code: {sp.CalledProcessError.returncode}")
         line = True
         while line:
             line = p.stdout.readline().decode("utf-8").strip()
             print(line)
 
     def deprecated_download_data_via_youtube_dl_login(self):
-        """Uses youtube_dl to download individual json files for each video."""
+        """
+        Uses users google credentials to download individual json files for each video.
+        """
         result = input(DEPRECATION_NOTE)
         if result.lower() != 'y':
             sys.exit()
@@ -204,11 +170,9 @@ class Analysis:
                     break
 
     def df_from_files(self):
-        """Constructs a Dataframe from the downloaded json files.
-
-        All json keys whose values are not lists are compiled into the dataframe.
-        The dataframe is then saved as a csv file in the self.ran directory.
-        The tags of each video are pickled and saved as tags.txt
+        """
+        Constructs a Dataframe from the downloaded json files and saves it in the ran data folder 
+        for use if the progarm is run again. 
         """
         print('Creating dataframe...')
         num = len([name for name in os.listdir(self.raw) if not name[0] == '.'])
@@ -232,7 +196,9 @@ class Analysis:
         pickle.dump(self.tags, open(os.path.join(self.ran, 'tags.txt'), 'wb'))
 
     def make_wordcloud(self):
-        """Generate the wordcloud file and save it to static/images/."""
+        """
+        Generates a wordcloud and then sves it as an image for display in the browser.
+        """
         print('Creating wordcloud')
         wordcloud = WordCloud(width=1920,
                               height=1080,
@@ -242,7 +208,10 @@ class Analysis:
         wordcloud.to_file(os.path.join('static', 'images', 'wordcloud.png'))
 
     def check_df(self):
-        """Create the dataframe and tags from files if file doesn't exist."""
+        """
+        Check to see if a dataframe from a previous run exists, if so read from it 
+        if not then make a new dataframe
+        """
         if not os.path.exists(self.ran):
             os.makedirs(self.ran)
         df_file = os.path.join(self.ran, 'df.csv')
@@ -254,7 +223,9 @@ class Analysis:
             self.df_from_files()
 
     def total_time(self):
-        """The amount of time spent watching videos."""
+        """
+        Calculte The amount of time spent watching videos.
+        """
         self.seconds = self.df.duration.sum()
         seconds = self.seconds
         intervals = (
@@ -265,9 +236,7 @@ class Analysis:
             ('minutes', 60),
             ('seconds', 1)
             )
-
         result = []
-
         for name, count in intervals:
             value = seconds // count
             if value:
@@ -277,11 +246,36 @@ class Analysis:
                 result.append("{} {}".format(int(value), name))
         self.formatted_time = ', '.join(result)
 
-    def best_and_worst_videos(self):
-        """Finds well liked and highly viewed videos"""
+    def calc_most_played_artist_watchtime(self):
+        """
+        Compute the total watchtime for the most played artist
+        """
+        seconds = self.df.duration.sum()
+        intervals = (
+            ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
+            ('weeks', 604800),    # 60 * 60 * 24 * 7
+            ('days', 86400),      # 60 * 60 * 24
+            ('hours', 3600),      # 60 * 60
+            ('minutes', 60),
+            ('seconds', 1)
+            )
+        result = []
+        for name, count in intervals:
+            value = seconds // count
+            if value:
+                seconds -= value * count
+                if value == 1:
+                    name = name.rstrip('s')
+                result.append("{} {}".format(int(value), name))
+        self.formatted_time = ', '.join(result)
+
+    def top_viewed(self):
+        """
+        Finds videos with less than 100 views then splits the data set into 
+        10 equal sized groups and gets the videos with the highest and lowest view count per 
+        group.
+        """
         self.most_viewed = self.df.loc[self.df['view_count'].idxmax()]
-        # less than 10 views 
-        # low_views = self.df[self.df['view_count'] < 10] 
         # less than 100 views 
         low_views = self.df[self.df['view_count'] < 100] 
         self.least_viewed = low_views.sample(min(len(low_views), 10), random_state=0)
@@ -291,6 +285,9 @@ class Analysis:
         self.best_per_decile = self.df.iloc[grouped['like_count'].idxmax()]
 
     def most_emojis_description(self):
+        """
+        Find the video description with the most emojis in it.
+        """
         def _emoji_variety(desc):
             # getting errors here because some descriptions are NaN or numbers so just skip over any TypeErrors
             try:
@@ -301,7 +298,9 @@ class Analysis:
         self.emojis = self.df.iloc[counts.idxmax()]
 
     def funniest_description(self):
-        """Counts number of times 'funny' is in each description. Saves top result."""
+        """
+        Counts number of times 'funny' is in each description and saves top result.
+        """
         funny_counts = []
         descriptions = []
         index = []
@@ -318,11 +317,16 @@ class Analysis:
         if self.funny_counts > 0:
             self.funny = self.df.iloc[index[funny_counts_idx]]
         else:
-            title = 'Wait, 0? You\'re too cool to watch funny videos on youtube?'
-            self.funny = make_fake_series(title, average_rating='N/A')
+            title = 'You dont like funny videos?'
+            self.funny = make_fake_series(title, release_year_graph='N/A')
 
-    def three_randoms(self):
-        """Finds results for video resolutions, most popular channels, and funniest video."""
+    def random_section(self):
+        """
+        Finds the number of HD and UHD videos watched, 
+        the top uploader that you watched, 
+        the most played artist, 
+        and the description with the "funniest" description
+        """
         height = self.df['height'].astype(int)
         self.HD = self.df[(720 <= height) & (height <= 1080)].shape[0]
         self.UHD = self.df[height > 1080].shape[0]
@@ -373,23 +377,37 @@ class Analysis:
         print(self.most_played_uploader_watchtime)
 
     def compute(self):
+        """
+        Computes total time, 
+        most liked videos, 
+        most emojis in description, 
+        10 oldest videos
+        oldest upload date
+        and the three randoms function 
+        """
         print('Computing...')
         self.total_time()
-        self.best_and_worst_videos()
+        self.top_viewed()
         self.most_emojis_description()
         self.oldest_videos = self.df[['title', 'webpage_url']].tail(n=10)
         self.oldest_upload = self.df.loc[self.df['upload_date'].idxmin()]
-        self.three_randoms()
+        self.random_section()
         self.calc_most_played_artist_watchtime()
 
     def graph(self):
+        """
+        Creates a grapher object and runs all graphing functions
+        """
         self.grapher = Grapher(self.df, self.tags)
-        self.grapher.average_rating()
+        self.grapher.release_year_graph()
         self.grapher.duration()
         self.grapher.views()
         self.grapher.gen_tags_plot()
 
     def start_analysis(self):
+        """
+        Begins the analysis of the data thats been downloaded
+        """
         self.check_df()
         if WordCloud is not None:
             self.make_wordcloud()
@@ -397,7 +415,10 @@ class Analysis:
         self.graph()
 
     def run(self):
-        """Main function for downloading and analyzing data."""
+        """
+        Checks if there is data from a previous run, if not downloads the data
+        if there is start the analysis immediately
+        """
         file1 = os.path.join(self.raw, '00001.info.json')
         some_data = os.path.isfile(file1)
         if not some_data:
