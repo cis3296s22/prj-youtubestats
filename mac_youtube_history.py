@@ -144,7 +144,8 @@ class Analysis:
         self.UHD = None
         self.top_uploaders = None
         self.most_played_artist = None
-        self.most_played_artist_watchtime = None
+        self.most_played_artist_id = None
+        self.most_played_uploader_watchtime = None
         self.funny = None
         self.funny_counts = None
 
@@ -326,14 +327,28 @@ class Analysis:
         self.HD = self.df[(720 <= height) & (height <= 1080)].shape[0]
         self.UHD = self.df[height > 1080].shape[0]
         self.top_uploaders = self.df.uploader.value_counts().head(n=15)
-        self.most_played_artist = self.df['artist'].mode()
+        self.most_played_artist = self.df['uploader'].mode()
         self.funniest_description()
         
     def calc_most_played_artist_watchtime(self):
         """Compute the total watchtime for the most played artist"""
+        """get a boolean dataframe to determine the indices of the videos by the most played uploader"""
+        result_df = self.df['uploader'].isin(self.most_played_artist)
+        """Initialize array to store the indices of the videos by the most played uploader"""
+        most_played_indices_arr = []
+        """Populate the array with the correct indices"""
+        for ind in result_df.index:
+            if result_df[ind] == True:
+                most_played_indices_arr.append(ind)
+            
+        print(most_played_indices_arr)
+        """Generate a pruned dataframe with only the videos by the most played uploader"""
+        pruned_df = self.df.iloc[most_played_indices_arr]
+        print(pruned_df)
         
+        seconds = pruned_df.duration.sum()
+        print(seconds)
         
-        seconds = self.df.duration.sum()
         
         intervals = (
             ('years', 31449600),  # 60 * 60 * 24 * 7 * 52
@@ -353,8 +368,9 @@ class Analysis:
                 if value == 1:
                     name = name.rstrip('s')
                 result.append("{} {}".format(int(value), name))
-        self.formatted_time = ', '.join(result)
+        self.most_played_uploader_watchtime = ', '.join(result)
         
+        print(self.most_played_uploader_watchtime)
 
     def compute(self):
         print('Computing...')
@@ -364,6 +380,7 @@ class Analysis:
         self.oldest_videos = self.df[['title', 'webpage_url']].tail(n=10)
         self.oldest_upload = self.df.loc[self.df['upload_date'].idxmin()]
         self.three_randoms()
+        self.calc_most_played_artist_watchtime()
 
     def graph(self):
         self.grapher = Grapher(self.df, self.tags)
