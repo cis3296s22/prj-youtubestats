@@ -346,7 +346,10 @@ class Analysis:
                     count = channels_id_series.get(uploader_id)
                     top_uploader = Uploader(uploader, uploader_id, image_url, count)
                     top_uploaders.append(top_uploader)
-        self.top_uploaders = top_uploaders
+                    
+        sorted_uploaders = sorted(top_uploaders, key=lambda x: x.count, reverse=True)
+        
+        self.top_uploaders = sorted_uploaders
                     
         
     def calc_most_played_uploader_watchtime(self):
