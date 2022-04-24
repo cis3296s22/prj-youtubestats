@@ -185,20 +185,20 @@
                             {% endfor %}
                         </table>
                     </div>
-                    <div class="mdl-data-table mdl-js-data-table">
+                    <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
                         <h4>Most popular videos per decile:</h4>
                         <table>
                             <tr>
-                                <th class="mdl-data-table__cell--non-numeric">Views</th>
-                                <th class="mdl-data-table__cell--non-numeric">Title</th>
-                                <th class="mdl-data-table__cell--non-numeric">Url</th>
+                                <th>Views</th>
+                                <th>Title</th>
+                                <th>Url</th>
                                 <!-- <th>Rating</th> -->
                             </tr>
                             {% for i, row in analysis.best_per_decile.iterrows() %}
                             <tr>
-                                <td class="mdl-data-table__cell--non-numeric">{{row.view_count}}</td>
-                                <td class="mdl-data-table__cell--non-numeric">{{row.title}}</td>
-                                <td class="mdl-data-table__cell--non-numeric"><a href="{{row.webpage_url}}">{{row.webpage_url}}</a>
+                                <td>{{row.view_count}}</td>
+                                <td>{{row.title}}</td>
+                                <td><a href="{{row.webpage_url}}">{{row.webpage_url}}</a>
                                 </td>
                             </tr>
                             {% endfor %}
